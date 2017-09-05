@@ -2,12 +2,15 @@ SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
+DROP SCHEMA IF EXISTS `mydb` ;
 CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
 USE `mydb` ;
 
 -- -----------------------------------------------------
 -- Table `mydb`.`UserMhs`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `mydb`.`UserMhs` ;
+
 CREATE  TABLE IF NOT EXISTS `mydb`.`UserMhs` (
   `NIM` INT NOT NULL ,
   `Nama` VARCHAR(50) NOT NULL ,
@@ -15,14 +18,17 @@ CREATE  TABLE IF NOT EXISTS `mydb`.`UserMhs` (
   `gender` VARCHAR(1) NOT NULL ,
   `email` VARCHAR(50) NULL ,
   `kontak` VARCHAR(14) NULL ,
-  PRIMARY KEY (`NIM`) ,
-  UNIQUE INDEX `NIM_UNIQUE` (`NIM` ASC) )
+  PRIMARY KEY (`NIM`) )
 ENGINE = InnoDB;
+
+CREATE UNIQUE INDEX `NIM_UNIQUE` ON `mydb`.`UserMhs` (`NIM` ASC) ;
 
 
 -- -----------------------------------------------------
 -- Table `mydb`.`UserDsn`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `mydb`.`UserDsn` ;
+
 CREATE  TABLE IF NOT EXISTS `mydb`.`UserDsn` (
   `NIP` INT NOT NULL ,
   `Nama` VARCHAR(50) NOT NULL ,
@@ -31,15 +37,19 @@ CREATE  TABLE IF NOT EXISTS `mydb`.`UserDsn` (
   `kontak` VARCHAR(14) NOT NULL ,
   `email` VARCHAR(50) NOT NULL ,
   `gender` VARCHAR(1) NOT NULL ,
-  PRIMARY KEY (`NIP`) ,
-  UNIQUE INDEX `NIP_UNIQUE` (`NIP` ASC) ,
-  UNIQUE INDEX `Kode_dosen_UNIQUE` (`Kode_dosen` ASC) )
+  PRIMARY KEY (`NIP`) )
 ENGINE = InnoDB;
+
+CREATE UNIQUE INDEX `NIP_UNIQUE` ON `mydb`.`UserDsn` (`NIP` ASC) ;
+
+CREATE UNIQUE INDEX `Kode_dosen_UNIQUE` ON `mydb`.`UserDsn` (`Kode_dosen` ASC) ;
 
 
 -- -----------------------------------------------------
 -- Table `mydb`.`Materi`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `mydb`.`Materi` ;
+
 CREATE  TABLE IF NOT EXISTS `mydb`.`Materi` (
   `id` INT NOT NULL ,
   `kode_matkul` VARCHAR(5) NOT NULL ,
@@ -49,7 +59,6 @@ CREATE  TABLE IF NOT EXISTS `mydb`.`Materi` (
   `tgl_input` DATE NOT NULL ,
   `tgl_update` DATE NOT NULL ,
   PRIMARY KEY (`id`) ,
-  INDEX `Kode_dosen_idx` (`kode_dosen` ASC) ,
   CONSTRAINT `Kode_dosen`
     FOREIGN KEY (`kode_dosen` )
     REFERENCES `mydb`.`UserDsn` (`Kode_dosen` )
@@ -57,10 +66,14 @@ CREATE  TABLE IF NOT EXISTS `mydb`.`Materi` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
+CREATE INDEX `Kode_dosen_idx` ON `mydb`.`Materi` (`kode_dosen` ASC) ;
+
 
 -- -----------------------------------------------------
 -- Table `mydb`.`BankSoal`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `mydb`.`BankSoal` ;
+
 CREATE  TABLE IF NOT EXISTS `mydb`.`BankSoal` (
   `kode_soal` INT NOT NULL ,
   `Kode_dosen` VARCHAR(3) NOT NULL ,
@@ -69,8 +82,6 @@ CREATE  TABLE IF NOT EXISTS `mydb`.`BankSoal` (
   `tgl_input` DATE NOT NULL ,
   `tgl_update` DATE NOT NULL ,
   PRIMARY KEY (`kode_soal`) ,
-  UNIQUE INDEX `kode_soal_UNIQUE` (`kode_soal` ASC) ,
-  UNIQUE INDEX `Kode_dosen_UNIQUE` (`Kode_dosen` ASC) ,
   CONSTRAINT `Kode_dosen`
     FOREIGN KEY (`Kode_dosen` )
     REFERENCES `mydb`.`UserDsn` (`Kode_dosen` )
@@ -78,10 +89,16 @@ CREATE  TABLE IF NOT EXISTS `mydb`.`BankSoal` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+CREATE UNIQUE INDEX `kode_soal_UNIQUE` ON `mydb`.`BankSoal` (`kode_soal` ASC) ;
+
+CREATE UNIQUE INDEX `Kode_dosen_UNIQUE` ON `mydb`.`BankSoal` (`Kode_dosen` ASC) ;
+
 
 -- -----------------------------------------------------
 -- Table `mydb`.`Jawaban`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `mydb`.`Jawaban` ;
+
 CREATE  TABLE IF NOT EXISTS `mydb`.`Jawaban` (
   `NIM` INT NOT NULL ,
   `Nama` VARCHAR(50) NOT NULL ,
@@ -92,8 +109,6 @@ CREATE  TABLE IF NOT EXISTS `mydb`.`Jawaban` (
   `tgl_masuk` DATE NOT NULL ,
   `tgl_update` DATE NOT NULL ,
   PRIMARY KEY (`NIM`) ,
-  UNIQUE INDEX `NIM_UNIQUE` (`NIM` ASC) ,
-  UNIQUE INDEX `Kode_dosen_UNIQUE` (`Kode_dosen` ASC) ,
   CONSTRAINT `NIM`
     FOREIGN KEY (`NIM` )
     REFERENCES `mydb`.`UserMhs` (`NIM` )
@@ -106,10 +121,16 @@ CREATE  TABLE IF NOT EXISTS `mydb`.`Jawaban` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+CREATE UNIQUE INDEX `NIM_UNIQUE` ON `mydb`.`Jawaban` (`NIM` ASC) ;
+
+CREATE UNIQUE INDEX `Kode_dosen_UNIQUE` ON `mydb`.`Jawaban` (`Kode_dosen` ASC) ;
+
 
 -- -----------------------------------------------------
 -- Table `mydb`.`Nilai`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `mydb`.`Nilai` ;
+
 CREATE  TABLE IF NOT EXISTS `mydb`.`Nilai` (
   `NIM` INT NOT NULL ,
   `Nama` VARCHAR(50) NOT NULL ,
@@ -118,8 +139,6 @@ CREATE  TABLE IF NOT EXISTS `mydb`.`Nilai` (
   `nama_tugas` VARCHAR(50) NOT NULL ,
   `nilai` DOUBLE NOT NULL ,
   PRIMARY KEY (`NIM`) ,
-  UNIQUE INDEX `NIM_UNIQUE` (`NIM` ASC) ,
-  INDEX `Kode_matkul_idx` (`kode_matkul` ASC) ,
   CONSTRAINT `NIM`
     FOREIGN KEY (`NIM` )
     REFERENCES `mydb`.`UserMhs` (`NIM` )
@@ -131,6 +150,10 @@ CREATE  TABLE IF NOT EXISTS `mydb`.`Nilai` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
+
+CREATE UNIQUE INDEX `NIM_UNIQUE` ON `mydb`.`Nilai` (`NIM` ASC) ;
+
+CREATE INDEX `Kode_matkul_idx` ON `mydb`.`Nilai` (`kode_matkul` ASC) ;
 
 USE `mydb` ;
 
