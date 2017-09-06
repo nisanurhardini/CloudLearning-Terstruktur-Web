@@ -54,7 +54,17 @@ CREATE TABLE `materi` (
 --
 -- Indexes for dumped tables
 --
+CREATE TABLE `usermhs` (
+  `NIM` int(10) NOT NULL,
+  `nama` varchar(50) NOT NULL,
+  `tgl_lahir` date NOT NULL,
+  `password` varchar(16) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `no_hp` varchar(14) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+ALTER TABLE `usermhs`
+  ADD PRIMARY KEY (`NIM`);
 --
 -- Indexes for table `banksoal`
 --
