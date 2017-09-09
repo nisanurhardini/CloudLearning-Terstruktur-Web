@@ -2,160 +2,298 @@ SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
-DROP SCHEMA IF EXISTS `mydb` ;
-CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
-USE `mydb` ;
+DROP SCHEMA IF EXISTS `tubes_impal` ;
+CREATE SCHEMA IF NOT EXISTS `tubes_impal` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
+USE `tubes_impal` ;
 
 -- -----------------------------------------------------
--- Table `mydb`.`UserMhs`
+-- Table `tubes_impal`.`mahasiswa`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`UserMhs` ;
+DROP TABLE IF EXISTS `tubes_impal`.`mahasiswa` ;
 
-CREATE  TABLE IF NOT EXISTS `mydb`.`UserMhs` (
-  `NIM` INT NOT NULL ,
-  `Nama` VARCHAR(50) NOT NULL ,
+CREATE  TABLE IF NOT EXISTS `tubes_impal`.`mahasiswa` (
+  `nim` INT NOT NULL ,
+  `nama` VARCHAR(50) NOT NULL ,
   `tgl_lahir` DATE NOT NULL ,
-  `gender` VARCHAR(1) NOT NULL ,
-  `email` VARCHAR(50) NULL ,
-  `kontak` VARCHAR(14) NULL ,
-  PRIMARY KEY (`NIM`) )
-ENGINE = InnoDB;
-
-CREATE UNIQUE INDEX `NIM_UNIQUE` ON `mydb`.`UserMhs` (`NIM` ASC) ;
-
-
--- -----------------------------------------------------
--- Table `mydb`.`UserDsn`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`UserDsn` ;
-
-CREATE  TABLE IF NOT EXISTS `mydb`.`UserDsn` (
-  `NIP` INT NOT NULL ,
-  `Nama` VARCHAR(50) NOT NULL ,
-  `Kode_dosen` VARCHAR(3) NOT NULL ,
-  `tgl_lahir` DATE NOT NULL ,
+  `alamat` VARCHAR(150) NOT NULL ,
+  `password` VARCHAR(16) NOT NULL ,
   `kontak` VARCHAR(14) NOT NULL ,
   `email` VARCHAR(50) NOT NULL ,
-  `gender` VARCHAR(1) NOT NULL ,
-  PRIMARY KEY (`NIP`) )
+  `kelas` VARCHAR(10) NOT NULL ,
+  `fak_prodi` VARCHAR(30) NOT NULL ,
+  PRIMARY KEY (`nim`) )
 ENGINE = InnoDB;
 
-CREATE UNIQUE INDEX `NIP_UNIQUE` ON `mydb`.`UserDsn` (`NIP` ASC) ;
-
-CREATE UNIQUE INDEX `Kode_dosen_UNIQUE` ON `mydb`.`UserDsn` (`Kode_dosen` ASC) ;
+CREATE UNIQUE INDEX `nim_UNIQUE` ON `tubes_impal`.`mahasiswa` (`nim` ASC) ;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Materi`
+-- Table `tubes_impal`.`dosen`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`Materi` ;
+DROP TABLE IF EXISTS `tubes_impal`.`dosen` ;
 
-CREATE  TABLE IF NOT EXISTS `mydb`.`Materi` (
-  `id` INT NOT NULL ,
-  `kode_matkul` VARCHAR(5) NOT NULL ,
+CREATE  TABLE IF NOT EXISTS `tubes_impal`.`dosen` (
+  `nid` INT NOT NULL ,
+  `nama` VARCHAR(50) NOT NULL ,
+  `tgl_lahir` DATE NOT NULL ,
+  `alamat` VARCHAR(150) NOT NULL ,
+  `password` VARCHAR(16) NOT NULL ,
   `kode_dosen` VARCHAR(3) NOT NULL ,
+  `kontak` VARCHAR(14) NOT NULL ,
+  `email` VARCHAR(50) NOT NULL ,
+  PRIMARY KEY (`nid`) )
+ENGINE = InnoDB;
+
+CREATE UNIQUE INDEX `NID_UNIQUE` ON `tubes_impal`.`dosen` (`nid` ASC) ;
+
+
+-- -----------------------------------------------------
+-- Table `tubes_impal`.`mata_kuliah`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `tubes_impal`.`mata_kuliah` ;
+
+CREATE  TABLE IF NOT EXISTS `tubes_impal`.`mata_kuliah` (
+  `kode_matkul` VARCHAR(6) NOT NULL ,
   `nama_matkul` VARCHAR(50) NOT NULL ,
-  `pathfile` TEXT NOT NULL ,
+  `pathfile` VARCHAR(500) NULL ,
+  PRIMARY KEY (`kode_matkul`) )
+ENGINE = InnoDB;
+
+CREATE UNIQUE INDEX `kode_matkul_UNIQUE` ON `tubes_impal`.`mata_kuliah` (`kode_matkul` ASC) ;
+
+
+-- -----------------------------------------------------
+-- Table `tubes_impal`.`bank_soal`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `tubes_impal`.`bank_soal` ;
+
+CREATE  TABLE IF NOT EXISTS `tubes_impal`.`bank_soal` (
+  `id_soal` VARCHAR(11) NOT NULL ,
+  `pathfile` VARCHAR(500) NULL ,
   `tgl_input` DATE NOT NULL ,
-  `tgl_update` DATE NOT NULL ,
+  `tgl_update` DATE NULL ,
+  PRIMARY KEY (`id_soal`) )
+ENGINE = InnoDB;
+
+CREATE UNIQUE INDEX `id_soal_UNIQUE` ON `tubes_impal`.`bank_soal` (`id_soal` ASC) ;
+
+
+-- -----------------------------------------------------
+-- Table `tubes_impal`.`jawaban`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `tubes_impal`.`jawaban` ;
+
+CREATE  TABLE IF NOT EXISTS `tubes_impal`.`jawaban` (
+  `id` INT NOT NULL AUTO_INCREMENT ,
+  `pathfile` VARCHAR(500) NULL ,
+  `tgl_input` DATE NOT NULL ,
+  `tgl_update` DATE NULL ,
+  `nim` INT NOT NULL ,
   PRIMARY KEY (`id`) ,
-  CONSTRAINT `Kode_dosen`
-    FOREIGN KEY (`kode_dosen` )
-    REFERENCES `mydb`.`UserDsn` (`Kode_dosen` )
-    ON DELETE CASCADE
+  CONSTRAINT `FK_nim_jawab`
+    FOREIGN KEY (`nim` )
+    REFERENCES `tubes_impal`.`mahasiswa` (`nim` )
+    ON DELETE RESTRICT
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
-CREATE INDEX `Kode_dosen_idx` ON `mydb`.`Materi` (`kode_dosen` ASC) ;
+CREATE INDEX `nim_idx` ON `tubes_impal`.`jawaban` (`nim` ASC) ;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`BankSoal`
+-- Table `tubes_impal`.`rAmbil`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`BankSoal` ;
+DROP TABLE IF EXISTS `tubes_impal`.`rAmbil` ;
 
-CREATE  TABLE IF NOT EXISTS `mydb`.`BankSoal` (
-  `kode_soal` INT NOT NULL ,
-  `Kode_dosen` VARCHAR(3) NOT NULL ,
-  `pathfile` TEXT NOT NULL ,
-  `solusi` TEXT NULL ,
-  `tgl_input` DATE NOT NULL ,
-  `tgl_update` DATE NOT NULL ,
-  PRIMARY KEY (`kode_soal`) ,
-  CONSTRAINT `Kode_dosen`
-    FOREIGN KEY (`Kode_dosen` )
-    REFERENCES `mydb`.`UserDsn` (`Kode_dosen` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-CREATE UNIQUE INDEX `kode_soal_UNIQUE` ON `mydb`.`BankSoal` (`kode_soal` ASC) ;
-
-CREATE UNIQUE INDEX `Kode_dosen_UNIQUE` ON `mydb`.`BankSoal` (`Kode_dosen` ASC) ;
-
-
--- -----------------------------------------------------
--- Table `mydb`.`Jawaban`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`Jawaban` ;
-
-CREATE  TABLE IF NOT EXISTS `mydb`.`Jawaban` (
-  `NIM` INT NOT NULL ,
-  `Nama` VARCHAR(50) NOT NULL ,
-  `Kelas` VARCHAR(8) NOT NULL ,
-  `Kode_dosen` VARCHAR(3) NOT NULL ,
-  `nama_matkul` VARCHAR(50) NOT NULL ,
-  `pathfile` TEXT NOT NULL ,
-  `tgl_masuk` DATE NOT NULL ,
-  `tgl_update` DATE NOT NULL ,
-  PRIMARY KEY (`NIM`) ,
-  CONSTRAINT `NIM`
-    FOREIGN KEY (`NIM` )
-    REFERENCES `mydb`.`UserMhs` (`NIM` )
-    ON DELETE NO ACTION
+CREATE  TABLE IF NOT EXISTS `tubes_impal`.`rAmbil` (
+  `nim` INT NOT NULL ,
+  `kode_matkul` VARCHAR(6) NOT NULL ,
+  CONSTRAINT `FK_nim_ambil`
+    FOREIGN KEY (`nim` )
+    REFERENCES `tubes_impal`.`mahasiswa` (`nim` )
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
-  CONSTRAINT `Kode_dosen`
-    FOREIGN KEY (`Kode_dosen` )
-    REFERENCES `mydb`.`UserDsn` (`Kode_dosen` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-CREATE UNIQUE INDEX `NIM_UNIQUE` ON `mydb`.`Jawaban` (`NIM` ASC) ;
-
-CREATE UNIQUE INDEX `Kode_dosen_UNIQUE` ON `mydb`.`Jawaban` (`Kode_dosen` ASC) ;
-
-
--- -----------------------------------------------------
--- Table `mydb`.`Nilai`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`Nilai` ;
-
-CREATE  TABLE IF NOT EXISTS `mydb`.`Nilai` (
-  `NIM` INT NOT NULL ,
-  `Nama` VARCHAR(50) NOT NULL ,
-  `kode_matkul` VARCHAR(5) NOT NULL ,
-  `nama_matkul` VARCHAR(50) NOT NULL ,
-  `nama_tugas` VARCHAR(50) NOT NULL ,
-  `nilai` DOUBLE NOT NULL ,
-  PRIMARY KEY (`NIM`) ,
-  CONSTRAINT `NIM`
-    FOREIGN KEY (`NIM` )
-    REFERENCES `mydb`.`UserMhs` (`NIM` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `Kode_matkul`
+  CONSTRAINT `FK_kode_matkul_ambil`
     FOREIGN KEY (`kode_matkul` )
-    REFERENCES `mydb`.`Materi` (`kode_dosen` )
-    ON DELETE NO ACTION
+    REFERENCES `tubes_impal`.`mata_kuliah` (`kode_matkul` )
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-CREATE UNIQUE INDEX `NIM_UNIQUE` ON `mydb`.`Nilai` (`NIM` ASC) ;
+CREATE INDEX `nim_idx` ON `tubes_impal`.`rAmbil` (`nim` ASC) ;
 
-CREATE INDEX `Kode_matkul_idx` ON `mydb`.`Nilai` (`kode_matkul` ASC) ;
+CREATE INDEX `kode_matkul_idx` ON `tubes_impal`.`rAmbil` (`kode_matkul` ASC) ;
 
-USE `mydb` ;
+
+-- -----------------------------------------------------
+-- Table `tubes_impal`.`rAjar`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `tubes_impal`.`rAjar` ;
+
+CREATE  TABLE IF NOT EXISTS `tubes_impal`.`rAjar` (
+  `nid` INT NOT NULL ,
+  `kode_matkul` VARCHAR(6) NOT NULL ,
+  CONSTRAINT `FK_nid_ajar`
+    FOREIGN KEY (`nid` )
+    REFERENCES `tubes_impal`.`dosen` (`nid` )
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `FK_kode_matkul_ajar`
+    FOREIGN KEY (`kode_matkul` )
+    REFERENCES `tubes_impal`.`mata_kuliah` (`kode_matkul` )
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+CREATE INDEX `nid_idx` ON `tubes_impal`.`rAjar` (`nid` ASC) ;
+
+CREATE INDEX `kode_matkul_idx` ON `tubes_impal`.`rAjar` (`kode_matkul` ASC) ;
+
+
+-- -----------------------------------------------------
+-- Table `tubes_impal`.`rMembuat`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `tubes_impal`.`rMembuat` ;
+
+CREATE  TABLE IF NOT EXISTS `tubes_impal`.`rMembuat` (
+  `nid` INT NOT NULL ,
+  `id_soal` VARCHAR(11) NOT NULL ,
+  `nama_set` VARCHAR(50) NOT NULL ,
+  CONSTRAINT `FK_nid_buat`
+    FOREIGN KEY (`nid` )
+    REFERENCES `tubes_impal`.`dosen` (`nid` )
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `FK_id_soal_buat`
+    FOREIGN KEY (`id_soal` )
+    REFERENCES `tubes_impal`.`bank_soal` (`id_soal` )
+    ON DELETE RESTRICT
+    ON UPDATE RESTRICT)
+ENGINE = InnoDB;
+
+CREATE INDEX `nid_idx` ON `tubes_impal`.`rMembuat` (`nid` ASC) ;
+
+CREATE INDEX `id_soal_idx` ON `tubes_impal`.`rMembuat` (`id_soal` ASC) ;
+
+
+-- -----------------------------------------------------
+-- Table `tubes_impal`.`rCocok`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `tubes_impal`.`rCocok` ;
+
+CREATE  TABLE IF NOT EXISTS `tubes_impal`.`rCocok` (
+  `id_soal` VARCHAR(11) NOT NULL ,
+  `id` INT NOT NULL ,
+  `nid` INT NOT NULL ,
+  `kode_matkul` VARCHAR(6) NOT NULL ,
+  PRIMARY KEY (`id_soal`) ,
+  CONSTRAINT `FK_id_soal_cocok`
+    FOREIGN KEY (`id_soal` )
+    REFERENCES `tubes_impal`.`bank_soal` (`id_soal` )
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `FK_id_cocok`
+    FOREIGN KEY (`id` )
+    REFERENCES `tubes_impal`.`jawaban` (`id` )
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `FK_nid_cocok`
+    FOREIGN KEY (`nid` )
+    REFERENCES `tubes_impal`.`rAjar` (`nid` )
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `FK_kode_matkul_cocok`
+    FOREIGN KEY (`kode_matkul` )
+    REFERENCES `tubes_impal`.`rAjar` (`kode_matkul` )
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+CREATE INDEX `id_soal_idx` ON `tubes_impal`.`rCocok` (`id_soal` ASC) ;
+
+CREATE INDEX `id_idx` ON `tubes_impal`.`rCocok` (`id` ASC) ;
+
+CREATE INDEX `nid_idx` ON `tubes_impal`.`rCocok` (`nid` ASC) ;
+
+CREATE INDEX `kode_matkul_idx` ON `tubes_impal`.`rCocok` (`kode_matkul` ASC) ;
+
+
+-- -----------------------------------------------------
+-- Table `tubes_impal`.`nilai`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `tubes_impal`.`nilai` ;
+
+CREATE  TABLE IF NOT EXISTS `tubes_impal`.`nilai` (
+  `id_nilai` INT NOT NULL AUTO_INCREMENT ,
+  `nilai` INT NOT NULL ,
+  `tgl_input` DATE NOT NULL ,
+  `tgl_update` DATE NULL ,
+  PRIMARY KEY (`id_nilai`) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `tubes_impal`.`rMemberi`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `tubes_impal`.`rMemberi` ;
+
+CREATE  TABLE IF NOT EXISTS `tubes_impal`.`rMemberi` (
+  `nomor` INT NOT NULL AUTO_INCREMENT ,
+  `nid` INT NOT NULL ,
+  `kode_matkul` VARCHAR(6) NOT NULL ,
+  `id_nilai` INT NOT NULL ,
+  PRIMARY KEY (`nomor`) ,
+  CONSTRAINT `FK_nid_beri`
+    FOREIGN KEY (`nid` )
+    REFERENCES `tubes_impal`.`rAjar` (`nid` )
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `FK_kode_matkul_beri`
+    FOREIGN KEY (`kode_matkul` )
+    REFERENCES `tubes_impal`.`rAjar` (`kode_matkul` )
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `FK_id_nilai_beri`
+    FOREIGN KEY (`id_nilai` )
+    REFERENCES `tubes_impal`.`nilai` (`id_nilai` )
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+CREATE INDEX `nid_idx` ON `tubes_impal`.`rMemberi` (`nid` ASC) ;
+
+CREATE INDEX `kode_matkul_idx` ON `tubes_impal`.`rMemberi` (`kode_matkul` ASC) ;
+
+CREATE INDEX `id_nilai_idx` ON `tubes_impal`.`rMemberi` (`id_nilai` ASC) ;
+
+
+-- -----------------------------------------------------
+-- Table `tubes_impal`.`rMemiliki`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `tubes_impal`.`rMemiliki` ;
+
+CREATE  TABLE IF NOT EXISTS `tubes_impal`.`rMemiliki` (
+  `id_set` INT NOT NULL AUTO_INCREMENT ,
+  `id_nilai` INT NOT NULL ,
+  `nim` INT NOT NULL ,
+  PRIMARY KEY (`id_set`) ,
+  CONSTRAINT `FK_id_nilai_milik`
+    FOREIGN KEY (`id_nilai` )
+    REFERENCES `tubes_impal`.`nilai` (`id_nilai` )
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `FK_nim_milik`
+    FOREIGN KEY (`nim` )
+    REFERENCES `tubes_impal`.`mahasiswa` (`nim` )
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+CREATE INDEX `id_nilai_idx` ON `tubes_impal`.`rMemiliki` (`id_nilai` ASC) ;
+
+CREATE INDEX `nim_idx` ON `tubes_impal`.`rMemiliki` (`nim` ASC) ;
+
+USE `tubes_impal` ;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
