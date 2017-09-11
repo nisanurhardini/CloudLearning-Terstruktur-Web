@@ -7,6 +7,38 @@ CREATE SCHEMA IF NOT EXISTS `tubes_impal` DEFAULT CHARACTER SET utf8 COLLATE utf
 USE `tubes_impal` ;
 
 -- -----------------------------------------------------
+-- Table `tubes_impal`.`fakultas`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `tubes_impal`.`fakultas` ;
+
+CREATE  TABLE IF NOT EXISTS `tubes_impal`.`fakultas` (
+  `kode_fakultas` VARCHAR(3) NOT NULL ,
+  `nama_fakultas` VARCHAR(50) NOT NULL ,
+  PRIMARY KEY (`kode_fakultas`) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `tubes_impal`.`kelas`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `tubes_impal`.`kelas` ;
+
+CREATE  TABLE IF NOT EXISTS `tubes_impal`.`kelas` (
+  `kelas_id` INT NOT NULL AUTO_INCREMENT ,
+  `nama_kelas` VARCHAR(10) NOT NULL ,
+  `kode_fakultas` VARCHAR(3) NOT NULL ,
+  PRIMARY KEY (`kelas_id`) ,
+  CONSTRAINT `FK_kode_fakultas_kelas`
+    FOREIGN KEY (`kode_fakultas` )
+    REFERENCES `tubes_impal`.`fakultas` (`kode_fakultas` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+CREATE INDEX `kode_fakultas_idx` ON `tubes_impal`.`kelas` (`kode_fakultas` ASC) ;
+
+
+-- -----------------------------------------------------
 -- Table `tubes_impal`.`mahasiswa`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `tubes_impal`.`mahasiswa` ;
@@ -19,12 +51,19 @@ CREATE  TABLE IF NOT EXISTS `tubes_impal`.`mahasiswa` (
   `password` VARCHAR(16) NOT NULL ,
   `kontak` VARCHAR(14) NOT NULL ,
   `email` VARCHAR(50) NOT NULL ,
-  `kelas` VARCHAR(10) NOT NULL ,
-  `fak_prodi` VARCHAR(30) NOT NULL ,
-  PRIMARY KEY (`nim`) )
+  `fak_prodi` VARCHAR(32) NOT NULL ,
+  `kelas` INT NOT NULL ,
+  PRIMARY KEY (`nim`) ,
+  CONSTRAINT `FK_kelas_mahasiswa`
+    FOREIGN KEY (`kelas` )
+    REFERENCES `tubes_impal`.`kelas` (`kelas_id` )
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 CREATE UNIQUE INDEX `nim_UNIQUE` ON `tubes_impal`.`mahasiswa` (`nim` ASC) ;
+
+CREATE INDEX `FK_kelas_mahasiswa_idx` ON `tubes_impal`.`mahasiswa` (`kelas` ASC) ;
 
 
 -- -----------------------------------------------------
