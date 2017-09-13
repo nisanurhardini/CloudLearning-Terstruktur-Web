@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 12, 2017 at 05:03 PM
+-- Generation Time: Sep 13, 2017 at 08:18 AM
 -- Server version: 10.1.13-MariaDB
 -- PHP Version: 5.6.20
 
@@ -139,7 +139,7 @@ CREATE TABLE `mahasiswa` (
 --
 
 INSERT INTO `mahasiswa` (`nim`, `nama`, `tgl_lahir`, `alamat`, `password`, `kontak`, `email`, `fak_prodi`, `kelas`) VALUES
-(1301154138, 'Hardiyan', '1995-12-17', 'Jln. Jalan', '123', '+6282240865443', 'Harude@HRD.com', 'FIF/S1 Teknik Informatika', 1),
+(1301154138, 'Harude', '1995-12-17', 'Bandung', '123', '6282240865443', 'Harude@HRD.com', 'FIF/S1 Teknik Informatika', 1),
 (1601144783, 'Cintya', '2017-09-12', 'Jl. Bebas', '123', '6282240865400', 'hardiyan.gunawan@gmail.com', 'FIK/S1 Desain Komunikasi Visual', 3);
 
 -- --------------------------------------------------------
@@ -207,14 +207,6 @@ CREATE TABLE `rambil` (
   `kode_matkul` varchar(6) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Dumping data for table `rambil`
---
-
-INSERT INTO `rambil` (`nim`, `kode_matkul`) VALUES
-(1301154138, 'CH32I2'),
-(1301154138, 'CH52S1');
-
 -- --------------------------------------------------------
 
 --
@@ -264,13 +256,6 @@ CREATE TABLE `rmemiliki` (
   `id_nilai` int(11) NOT NULL,
   `nim` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `rmemiliki`
---
-
-INSERT INTO `rmemiliki` (`id_set`, `id_nilai`, `nim`) VALUES
-(1, 1, 1301154138);
 
 --
 -- Indexes for dumped tables
@@ -329,7 +314,7 @@ ALTER TABLE `mahasiswa`
 --
 ALTER TABLE `mata_kuliah`
   ADD PRIMARY KEY (`id_matkul`),
-  ADD UNIQUE KEY `kode_matkul_UNIQUE` (`kode_matkul`);
+  ADD KEY `kode_matkul` (`kode_matkul`) USING BTREE;
 
 --
 -- Indexes for table `nilai`
@@ -413,7 +398,7 @@ ALTER TABLE `kelas`
 -- AUTO_INCREMENT for table `mata_kuliah`
 --
 ALTER TABLE `mata_kuliah`
-  MODIFY `id_matkul` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_matkul` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT for table `nilai`
 --
@@ -428,7 +413,7 @@ ALTER TABLE `rmemberi`
 -- AUTO_INCREMENT for table `rmemiliki`
 --
 ALTER TABLE `rmemiliki`
-  MODIFY `id_set` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_set` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- Constraints for dumped tables
 --
