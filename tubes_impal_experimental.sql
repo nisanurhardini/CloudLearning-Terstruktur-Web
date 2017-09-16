@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 13, 2017 at 08:18 AM
+-- Generation Time: Sep 16, 2017 at 01:38 PM
 -- Server version: 10.1.13-MariaDB
 -- PHP Version: 5.6.20
 
@@ -47,6 +47,14 @@ CREATE TABLE `dosen` (
   `kontak` varchar(14) NOT NULL,
   `email` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `dosen`
+--
+
+INSERT INTO `dosen` (`nid`, `nama`, `tgl_lahir`, `alamat`, `password`, `kode_dosen`, `kontak`, `email`) VALUES
+(12345, '1234', '2017-09-16', '1234', '123', 'asd', '9768263', 'test@test.com'),
+(99812732, 'HRD', '2017-09-12', 'Jln. Kaki', '123', 'HRD', '628732194832', 'Dosen@example.com');
 
 -- --------------------------------------------------------
 
@@ -153,17 +161,18 @@ CREATE TABLE `mata_kuliah` (
   `kode_matkul` varchar(6) NOT NULL,
   `nama_matkul` varchar(50) NOT NULL,
   `nama_materi` varchar(50) NOT NULL,
-  `pathfile` varchar(500) DEFAULT NULL
+  `pathfile` varchar(500) DEFAULT NULL,
+  `tgl_input` date NOT NULL,
+  `tgl_update` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `mata_kuliah`
 --
 
-INSERT INTO `mata_kuliah` (`id_matkul`, `kode_matkul`, `nama_matkul`, `nama_materi`, `pathfile`) VALUES
-(1, 'CH32I2', 'Probabilitas Statistika', 'Probablilitas', NULL),
-(2, 'CH21J3', 'Kalkulus II', 'Integral Lipat-Lipat', NULL),
-(3, 'CH52S1', 'Struktur Data', 'Tree', NULL);
+INSERT INTO `mata_kuliah` (`id_matkul`, `kode_matkul`, `nama_matkul`, `nama_materi`, `pathfile`, `tgl_input`, `tgl_update`) VALUES
+(8, 'CH52S1', 'Struktur Data', 'Single Linked List', 'dbfile/Tubes Impal.mwb.bak', '2017-09-16', NULL),
+(9, 'CH32I2', 'Probabilitas Statistika', 'Probabilitas', 'dbfile/Tubes_impal_Master_db_Fixed_V2.4.sql', '2017-09-16', NULL);
 
 -- --------------------------------------------------------
 
@@ -173,17 +182,10 @@ INSERT INTO `mata_kuliah` (`id_matkul`, `kode_matkul`, `nama_matkul`, `nama_mate
 
 CREATE TABLE `nilai` (
   `id_nilai` int(11) NOT NULL,
-  `nilai` int(11) NOT NULL,
+  `nilai` double NOT NULL,
   `tgl_input` date NOT NULL,
   `tgl_update` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `nilai`
---
-
-INSERT INTO `nilai` (`id_nilai`, `nilai`, `tgl_input`, `tgl_update`) VALUES
-(1, 90, '2017-09-12', NULL);
 
 -- --------------------------------------------------------
 
@@ -272,7 +274,8 @@ ALTER TABLE `bank_soal`
 --
 ALTER TABLE `dosen`
   ADD PRIMARY KEY (`nid`),
-  ADD UNIQUE KEY `NID_UNIQUE` (`nid`);
+  ADD UNIQUE KEY `NID_UNIQUE` (`nid`),
+  ADD UNIQUE KEY `kode_dosen` (`kode_dosen`);
 
 --
 -- Indexes for table `fakultas`
@@ -398,12 +401,12 @@ ALTER TABLE `kelas`
 -- AUTO_INCREMENT for table `mata_kuliah`
 --
 ALTER TABLE `mata_kuliah`
-  MODIFY `id_matkul` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_matkul` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 --
 -- AUTO_INCREMENT for table `nilai`
 --
 ALTER TABLE `nilai`
-  MODIFY `id_nilai` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_nilai` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `rmemberi`
 --
